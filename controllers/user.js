@@ -2,37 +2,42 @@ import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-// REGISTER ADMIN
+
 export const register = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { name, age, email, phone, password } = req.body;
 
-    if (!username || !password) {
+    if (!name || !age || !email || !phone || !password) {
       return res.status(400).json({
-        message: "Username and Password are required"
+        message: "All fields are required"
       });
     }
 
-    const existingUser = await User.findOne({ username });
+    
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
-        message: "User already exists"
+        message: "Admin already exists"
       });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
-      username,
+      name,
+      age,
+      email,
+      phone,
       password: hashedPassword,
       role: "admin"
     });
 
     return res.status(201).json({
       message: "Admin created successfully",
-      user: {
+      admin: {
         id: user._id,
-        username: user.username,
+        name: user.name,
+        email: user.email,
         role: user.role
       }
     });
@@ -46,18 +51,18 @@ export const register = async (req, res) => {
 };
 
 
-// LOGIN ADMIN
+
 export const login = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password) {
+    if (!email || !password) {
       return res.status(400).json({
-        message: "Username and Password are required"
+        message: "Email and Password are required"
       });
     }
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ email });
     if (!user || user.role !== "admin") {
       return res.status(400).json({
         message: "Admin does not exist"
@@ -74,7 +79,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
-        username: user.username,
+        email: user.email,
         role: user.role
       },
       process.env.JWT_SECRET_KEY,
@@ -84,7 +89,7 @@ export const login = async (req, res) => {
    
     res.cookie("adminToken", token, {
       httpOnly: true,
-      secure: false,
+      secure: false, 
       maxAge: 24 * 60 * 60 * 1000
     });
 
@@ -93,7 +98,8 @@ export const login = async (req, res) => {
       token,
       admin: {
         id: user._id,
-        username: user.username,
+        name: user.name,
+        email: user.email,
         role: user.role
       }
     });
