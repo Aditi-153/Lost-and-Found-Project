@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
-import userRouter from "./routes/admin.js";
+import userRouter from "./routes/user.js";
 
 dotenv.config();
 

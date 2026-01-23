@@ -1,4 +1,4 @@
-import User from "../models/admin.js";
+import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -81,7 +81,7 @@ export const login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    // If you are using cookies:
+   
     res.cookie("adminToken", token, {
       httpOnly: true,
       secure: false,
