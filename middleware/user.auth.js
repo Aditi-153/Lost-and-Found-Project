@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import listing from "../models/listing";
 
 export const adminProtect = async (req, res, next) => {
   try {
@@ -27,3 +28,4 @@ export const adminProtect = async (req, res, next) => {
     });
   }
 };
+

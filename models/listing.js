@@ -47,4 +47,6 @@ export const ListingSchema = new mongoose.Schema({
 
 })
 
-module.exports = mongoose.model("Listing" , ListingSchema)
+
+
+export default mongoose.model("Listing", ListingSchema);
