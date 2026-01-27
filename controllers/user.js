@@ -17,7 +17,7 @@ export const register = async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
-        message: "Admin already exists"
+        message: "user already exists"
       });
     }
 
@@ -29,18 +29,19 @@ export const register = async (req, res) => {
       email,
       phone,
       password: hashedPassword,
-      role: "admin"
+      role: "user"
     });
 
     return res.status(201).json({
-      message: "Admin created successfully",
-      admin: {
+      message: "user created successfully",
+      user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role
       }
     });
+
 
   } catch (error) {
     return res.status(500).json({
@@ -63,9 +64,9 @@ export const login = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-    if (!user || user.role !== "admin") {
+    if (!user || user.role !== "user") {
       return res.status(400).json({
-        message: "Admin does not exist"
+        message: "user does not exist"
       });
     }
 
@@ -87,16 +88,16 @@ export const login = async (req, res) => {
     );
 
    
-    res.cookie("adminToken", token, {
+    res.cookie("userToken", token, {
       httpOnly: true,
       secure: false, 
       maxAge: 24 * 60 * 60 * 1000
     });
 
     return res.status(200).json({
-      message: "Admin login successful",
+      message: "user login successful",
       token,
-      admin: {
+      user : {
         id: user._id,
         name: user.name,
         email: user.email,

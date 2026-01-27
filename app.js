@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import userRouter from "./routes/user.js";
+import listingRouter from "./routes/listing.js";
 
 dotenv.config();
 
@@ -19,7 +20,8 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-app.use("/admin", userRouter);
+app.use("/user", userRouter);
+app.use("/listing", listingRouter);
 
 const PORT = process.env.PORT || 3000;
 

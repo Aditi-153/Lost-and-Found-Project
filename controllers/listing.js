@@ -1,52 +1,47 @@
-import express from "express"
-import listing from "../models/listing.js"
+import listing from "../models/listing.js";
 import keyword_extractor from "keyword-extractor";
 
 
-//create lost item
-export const createLostItem = async(req, res) => {
-    try {
-        const { title , description , img , location  } = req.body;
-        
-        if(!title || !description || !location){
-            return res.status(400).json({ error: "All fields are required" });
-        }
-        
+// CREATE LOST ITEM
+export const createLostItem = async (req, res) => {
+  try {
+    const { title, description, img, location } = req.body;
 
-        //extract keywords
-        const keywords = keyword_extractor.extract(description, {
-            language : "english",
-            remove_digits : true,
-            return_changed_case : true,
-            remove_duplicates : false
-        });
-        
-        const item = await listing.create({
-            title,
-            description,
-            descriptionArr : keywords,
-            img :img || "",
-            location,
-            status : "Lost",
-            Author : [req.user.id]   
-        });
-
-
-        res.status(201).json({ 
-            message: "Item created successfully", 
-            item 
-        });
-        
-    } catch (error) {
-        res.status(500).json({ 
-            message : "error while adding lost item",
-            error: err.message 
-        });
+    if (!title || !description || !location) {
+      return res.status(400).json({ error: "All fields are required" });
     }
-}
 
-//create found item
+    const keywords = keyword_extractor.extract(description, {
+      language: "english",
+      remove_digits: true,
+      return_changed_case: true,
+      remove_duplicates: false
+    });
 
+    const item = await listing.create({
+      title,
+      description,
+      descriptionArr: keywords,
+      img: img || "",
+      location,
+      status: "Lost",
+      Author: [req.user.id]
+    });
+
+    res.status(201).json({
+      message: "Item created successfully",
+      item
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error while adding lost item",
+      error: error.message
+    });
+  }
+};
+
+// CREATE FOUND ITEM
 export const createFoundItem = async (req, res) => {
   try {
     const { title, description, location, img } = req.body;
@@ -83,14 +78,14 @@ export const createFoundItem = async (req, res) => {
 };
 
 
-//get listing report
-export const getListingReport = async (req, res, next) => {
+// GET USER LISTING REPORT
+export const getListingReport = async (req, res) => {
   try {
     const userId = req.user.id;
 
     const items = await listing.find({
       Author: userId
-    }).sort ({ createdAt: -1 });
+    }).sort({ createdAt: -1 });
 
     res.status(200).json({
       message: "Listing report fetched successfully",
@@ -98,20 +93,20 @@ export const getListingReport = async (req, res, next) => {
       items
     });
 
-  } catch(error) {
-    res.status(500).json({ 
-      message : "error in getting listing report",
-      error: error.message });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error in getting listing report",
+      error: error.message
+    });
   }
-}
+};
 
 
-//get matches items 
-
+// GET MATCHES
 export const getMatches = async (req, res) => {
   try {
-    const lostItems = await Listing.find({ status: "Lost" });
-    const foundItems = await Listing.find({ status: "Found" });
+    const lostItems = await listing.find({ status: "Lost" });
+    const foundItems = await listing.find({ status: "Found" });
 
     let matches = [];
 
