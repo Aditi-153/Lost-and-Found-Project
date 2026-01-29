@@ -1,4 +1,4 @@
-import admin from "../models/admin.js";
+import User from "../models/user.js";
 
 export const adminLogin = async ( req , res ) => {
     try {
@@ -11,7 +11,9 @@ export const adminLogin = async ( req , res ) => {
             });
         }
 
-        const adminUser = await admin.findOne()
+        
+
+        
 
     } catch(err){
         return res.status(500).json({
